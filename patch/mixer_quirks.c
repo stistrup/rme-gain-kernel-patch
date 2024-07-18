@@ -2550,6 +2550,9 @@ enum {
 #define SND_BBFPRO_GAIN_CHANNEL_MASK 0x03
 #define SND_BBFPRO_GAIN_CHANNEL_SHIFT 7
 #define SND_BBFPRO_GAIN_VAL_MASK 0x7f
+#define SND_BBFPRO_GAIN_VAL_MIN 0
+#define SND_BBFPRO_GAIN_VAL_MIC_MAX 65
+#define SND_BBFPRO_GAIN_VAL_LINE_MAX 18 // +9db but in 0.5 db incraments so 2x
 
 #define SND_BBFPRO_USBREQ_CTL_REG1 0x10
 #define SND_BBFPRO_USBREQ_CTL_REG2 0x17
@@ -2734,12 +2737,12 @@ static int snd_bbfpro_gain_info(struct snd_kcontrol *kcontrol,
 
     uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
     uinfo->count = 1;
-    uinfo->value.integer.min = 0;
+    uinfo->value.integer.min = SND_BBFPRO_GAIN_VAL_MIN;
     
     if (channel < 2) {
-        uinfo->value.integer.max = 65;
+        uinfo->value.integer.max = SND_BBFPRO_GAIN_VAL_MIC_MAX;
     } else {
-        uinfo->value.integer.max = 9;
+        uinfo->value.integer.max = SND_BBFPRO_GAIN_VAL_LINE_MAX;
     }
     
     return 0;
@@ -2755,19 +2758,13 @@ static int snd_bbfpro_gain_put(struct snd_kcontrol *kcontrol,
     int value = ucontrol->value.integer.value[0];
     int err;
 
+
     if (channel < 2) {
-        if (value < 0)
-            value = 0;
-        else if (value > 65)
-            value = 65;
-        // Handle the quirk for 0x01 - 0x09 gap
-        if (value > 0 && value < 10)
-            value = 10;
+        if (value > SND_BBFPRO_GAIN_VAL_MIC_MAX)
+            return -EINVAL;
     } else {
-        if (value < 0)
-            value = 0;
-        else if (value > 9)
-            value = 9;
+        if (value > SND_BBFPRO_GAIN_VAL_LINE_MAX)
+            return -EINVAL;
     }
 
     if (value == old_value)
