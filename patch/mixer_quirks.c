@@ -2735,7 +2735,7 @@ static int snd_bbfpro_gain_info(struct snd_kcontrol *kcontrol,
     if (channel < 2) {
         uinfo->value.integer.max = 65;
     } else {
-        uinfo->value.integer.max = 18;
+        uinfo->value.integer.max = 9;
     }
     
     return 0;
@@ -2761,8 +2761,8 @@ static int snd_bbfpro_gain_put(struct snd_kcontrol *kcontrol,
     } else {
         if (value < 0)
             value = 0;
-        else if (value > 18)
-            value = 18;
+        else if (value > 9)
+            value = 9;
     }
 
     if (value == (kcontrol->private_value & 0xffff))
