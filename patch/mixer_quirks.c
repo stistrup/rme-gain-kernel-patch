@@ -2750,7 +2750,20 @@ static int snd_bbfpro_gain_put(struct snd_kcontrol *kcontrol,
     int value = ucontrol->value.integer.value[0];
     int err;
 
-	value = value < 1 ? 0 : value > 55 ? 65 : value + 9;
+    if (channel < 2) {
+        if (value < 0)
+            value = 0;
+        else if (value > 65)
+            value = 65;
+        // Handle the quirk for 0x01 - 0x09 gap
+        if (value > 0 && value < 10)
+            value = 10;
+    } else {
+        if (value < 0)
+            value = 0;
+        else if (value > 9)
+            value = 9;
+    }
 
     if (value == (kcontrol->private_value & 0xffff))
         return 0;
