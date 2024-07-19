@@ -2705,87 +2705,87 @@ static int snd_bbfpro_ctl_resume(struct usb_mixer_elem_list *list)
 
 static int snd_bbfpro_gain_update(struct usb_mixer_interface *mixer, u8 channel, u8 gain)
 {
-    int err;
-    struct snd_usb_audio *chip = mixer->chip;
+	int err;
+	struct snd_usb_audio *chip = mixer->chip;
 
-    err = snd_usb_lock_shutdown(chip);
-    if (err < 0)
-        return err;
+	err = snd_usb_lock_shutdown(chip);
+	if (err < 0)
+	return err;
 
-    err = snd_usb_ctl_msg(chip->dev,
-                          usb_sndctrlpipe(chip->dev, 0),
-                          SND_BBFPRO_USBREQ_GAIN,
-                          USB_DIR_OUT | USB_TYPE_VENDOR | USB_RECIP_DEVICE,
-                          gain, channel, NULL, 0);
+	err = snd_usb_ctl_msg(chip->dev,
+				usb_sndctrlpipe(chip->dev, 0),
+				SND_BBFPRO_USBREQ_GAIN,
+				USB_DIR_OUT | USB_TYPE_VENDOR | USB_RECIP_DEVICE,
+				gain, channel, NULL, 0);
 
-    snd_usb_unlock_shutdown(chip);
-    return err;
+	snd_usb_unlock_shutdown(chip);
+	return err;
 }
 
 static int snd_bbfpro_gain_get(struct snd_kcontrol *kcontrol,
                                struct snd_ctl_elem_value *ucontrol)
 {
-    int value = kcontrol->private_value & SND_BBFPRO_GAIN_VAL_MASK;
-    ucontrol->value.integer.value[0] = value;
-    return 0;
+	int value = kcontrol->private_value & SND_BBFPRO_GAIN_VAL_MASK;
+	ucontrol->value.integer.value[0] = value;
+	return 0;
 }
 
 static int snd_bbfpro_gain_info(struct snd_kcontrol *kcontrol,
                                 struct snd_ctl_elem_info *uinfo)
 {
-    int channel = (kcontrol->private_value >> SND_BBFPRO_GAIN_CHANNEL_SHIFT) & SND_BBFPRO_GAIN_CHANNEL_MASK;
+	int channel = (kcontrol->private_value >> SND_BBFPRO_GAIN_CHANNEL_SHIFT) & SND_BBFPRO_GAIN_CHANNEL_MASK;
 
-    uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
-    uinfo->count = 1;
-    uinfo->value.integer.min = SND_BBFPRO_GAIN_VAL_MIN;
-    
-    if (channel < 2) {
-        uinfo->value.integer.max = SND_BBFPRO_GAIN_VAL_MIC_MAX;
-    } else {
-        uinfo->value.integer.max = SND_BBFPRO_GAIN_VAL_LINE_MAX;
-    }
-    
-    return 0;
+	uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
+	uinfo->count = 1;
+	uinfo->value.integer.min = SND_BBFPRO_GAIN_VAL_MIN;
+
+	if (channel < 2) {
+		uinfo->value.integer.max = SND_BBFPRO_GAIN_VAL_MIC_MAX;
+	} else {
+		uinfo->value.integer.max = SND_BBFPRO_GAIN_VAL_LINE_MAX;
+	}
+
+	return 0;
 }
 
 static int snd_bbfpro_gain_put(struct snd_kcontrol *kcontrol,
                                struct snd_ctl_elem_value *ucontrol)
 {
-    struct usb_mixer_elem_list *list = snd_kcontrol_chip(kcontrol);
-    struct usb_mixer_interface *mixer = list->mixer;
-    int channel = (kcontrol->private_value >> SND_BBFPRO_GAIN_CHANNEL_SHIFT) & SND_BBFPRO_GAIN_CHANNEL_MASK;
-    int old_value = kcontrol->private_value & SND_BBFPRO_GAIN_VAL_MASK;
-    int value = ucontrol->value.integer.value[0];
-    int err;
+	struct usb_mixer_elem_list *list = snd_kcontrol_chip(kcontrol);
+	struct usb_mixer_interface *mixer = list->mixer;
+	int channel = (kcontrol->private_value >> SND_BBFPRO_GAIN_CHANNEL_SHIFT) & SND_BBFPRO_GAIN_CHANNEL_MASK;
+	int old_value = kcontrol->private_value & SND_BBFPRO_GAIN_VAL_MASK;
+	int value = ucontrol->value.integer.value[0];
+	int err;
 
 
-    if (channel < 2) {
-        if (value > SND_BBFPRO_GAIN_VAL_MIC_MAX)
-            return -EINVAL;
-    } else {
-        if (value > SND_BBFPRO_GAIN_VAL_LINE_MAX)
-            return -EINVAL;
-    }
+	if (channel < 2) {
+	if (value > SND_BBFPRO_GAIN_VAL_MIC_MAX)
+		return -EINVAL;
+	} else {
+	if (value > SND_BBFPRO_GAIN_VAL_LINE_MAX)
+		return -EINVAL;
+	}
 
-    if (value == old_value)
-        return 0;
+	if (value == old_value)
+		return 0;
 
-    err = snd_bbfpro_gain_update(mixer, channel, value);
-    if (err < 0)
-        return err;
+	err = snd_bbfpro_gain_update(mixer, channel, value);
+	if (err < 0)
+		return err;
 
-    kcontrol->private_value = ((channel & SND_BBFPRO_GAIN_CHANNEL_MASK) << SND_BBFPRO_GAIN_CHANNEL_SHIFT) 
-                            | (value & SND_BBFPRO_GAIN_VAL_MASK);
-    return 1;
+	kcontrol->private_value = ((channel & SND_BBFPRO_GAIN_CHANNEL_MASK) << SND_BBFPRO_GAIN_CHANNEL_SHIFT) 
+				| (value & SND_BBFPRO_GAIN_VAL_MASK);
+	return 1;
 }
 
 static int snd_bbfpro_gain_resume(struct usb_mixer_elem_list *list)
 {
-    struct snd_kcontrol *kctl = list->kctl;
-    int channel = (kctl->private_value >> SND_BBFPRO_GAIN_CHANNEL_SHIFT) & SND_BBFPRO_GAIN_CHANNEL_MASK;
-    int value = kctl->private_value & SND_BBFPRO_GAIN_VAL_MASK;
-    
-    return snd_bbfpro_gain_update(list->mixer, channel, value);
+	struct snd_kcontrol *kctl = list->kctl;
+	int channel = (kctl->private_value >> SND_BBFPRO_GAIN_CHANNEL_SHIFT) & SND_BBFPRO_GAIN_CHANNEL_MASK;
+	int value = kctl->private_value & SND_BBFPRO_GAIN_VAL_MASK;
+
+	return snd_bbfpro_gain_update(list->mixer, channel, value);
 }
 
 static int snd_bbfpro_vol_update(struct usb_mixer_interface *mixer, u16 index,
@@ -2884,12 +2884,12 @@ static const struct snd_kcontrol_new snd_bbfpro_ctl_control = {
 };
 
 static const struct snd_kcontrol_new snd_bbfpro_gain_control = {
-    .iface = SNDRV_CTL_ELEM_IFACE_MIXER,
-    .access = SNDRV_CTL_ELEM_ACCESS_READWRITE,
-    .index = 0,
-    .info = snd_bbfpro_gain_info,
-    .get = snd_bbfpro_gain_get,
-    .put = snd_bbfpro_gain_put
+	.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
+	.access = SNDRV_CTL_ELEM_ACCESS_READWRITE,
+	.index = 0,
+	.info = snd_bbfpro_gain_info,
+	.get = snd_bbfpro_gain_get,
+	.put = snd_bbfpro_gain_put
 };
 
 static const struct snd_kcontrol_new snd_bbfpro_vol_control = {
@@ -2918,13 +2918,13 @@ static int snd_bbfpro_ctl_add(struct usb_mixer_interface *mixer, u8 reg,
 static int snd_bbfpro_gain_add(struct usb_mixer_interface *mixer, u16 channel,
                                char *name)
 {
-    struct snd_kcontrol_new knew = snd_bbfpro_gain_control;
+	struct snd_kcontrol_new knew = snd_bbfpro_gain_control;
 
-    knew.name = name;
-    knew.private_value = channel << SND_BBFPRO_GAIN_CHANNEL_SHIFT;
+	knew.name = name;
+	knew.private_value = channel << SND_BBFPRO_GAIN_CHANNEL_SHIFT;
 
-    return add_single_ctl_with_resume(mixer, 0, snd_bbfpro_gain_resume,
-        &knew, NULL);
+	return add_single_ctl_with_resume(mixer, 0, snd_bbfpro_gain_resume,
+		&knew, NULL);
 }
 
 static int snd_bbfpro_vol_add(struct usb_mixer_interface *mixer, u16 index,
@@ -3036,16 +3036,16 @@ static int snd_bbfpro_controls_create(struct usb_mixer_interface *mixer)
 	if (err < 0)
 		return err;
 
-    for (i = 0; i < 4; i++) {
-        if (i < 2) {
-            snprintf(name, sizeof(name), "Mic-AN%d Gain", i + 1);
-        } else {
-            snprintf(name, sizeof(name), "Line-IN%d Gain", i + 1);
-        }
-        err = snd_bbfpro_gain_add(mixer, i, name);
-        if (err < 0)
-            return err;
-    }
+	for (i = 0; i < 4; i++) {
+		if (i < 2) {
+			snprintf(name, sizeof(name), "Mic-AN%d Gain", i + 1);
+		} else {
+			snprintf(name, sizeof(name), "Line-IN%d Gain", i + 1);
+		}
+		err = snd_bbfpro_gain_add(mixer, i, name);
+		if (err < 0)
+			return err;
+	}
 
 	return 0;
 }
