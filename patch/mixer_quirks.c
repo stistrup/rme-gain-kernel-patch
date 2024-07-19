@@ -2703,7 +2703,7 @@ static int snd_bbfpro_ctl_resume(struct usb_mixer_elem_list *list)
 	return snd_bbfpro_ctl_update(list->mixer, reg, idx, value);
 }
 
-static int snd_bbfpro_gain_update(struct usb_mixer_interface *mixer, u8 channel, int gain)
+static int snd_bbfpro_gain_update(struct usb_mixer_interface *mixer, u8 channel, u8 gain)
 {
     int err;
     struct snd_usb_audio *chip = mixer->chip;
