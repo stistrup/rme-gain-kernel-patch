@@ -2552,7 +2552,7 @@ enum {
 #define SND_BBFPRO_GAIN_VAL_MASK 0x7f
 #define SND_BBFPRO_GAIN_VAL_MIN 0
 #define SND_BBFPRO_GAIN_VAL_MIC_MAX 65
-#define SND_BBFPRO_GAIN_VAL_LINE_MAX 18 // +9db but in 0.5 db incraments so 2x
+#define SND_BBFPRO_GAIN_VAL_LINE_MAX 9
 
 #define SND_BBFPRO_USBREQ_CTL_REG1 0x10
 #define SND_BBFPRO_USBREQ_CTL_REG2 0x17
@@ -2706,6 +2706,7 @@ static int snd_bbfpro_ctl_resume(struct usb_mixer_elem_list *list)
 static int snd_bbfpro_gain_update(struct usb_mixer_interface *mixer, u8 channel, u8 gain)
 {
 	int err;
+	
 	struct snd_usb_audio *chip = mixer->chip;
 
 	err = snd_usb_lock_shutdown(chip);
