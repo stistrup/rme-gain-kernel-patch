@@ -2757,13 +2757,14 @@ static int snd_bbfpro_gain_info(struct snd_kcontrol *kcontrol,
 static int snd_bbfpro_gain_put(struct snd_kcontrol *kcontrol,
                                struct snd_ctl_elem_value *ucontrol)
 {
-	int channel, old_value, value, err;
+	int pv, channel, old_value, value, err;
 
 	struct usb_mixer_elem_list *list = snd_kcontrol_chip(kcontrol);
 	struct usb_mixer_interface *mixer = list->mixer;
 	
-	channel = (kcontrol->private_value >> SND_BBFPRO_GAIN_CHANNEL_SHIFT) & SND_BBFPRO_GAIN_CHANNEL_MASK;
-	old_value = kcontrol->private_value & SND_BBFPRO_GAIN_VAL_MASK;
+	pv = kcontrol->private_value;
+	channel = (pv >> SND_BBFPRO_GAIN_CHANNEL_SHIFT) & SND_BBFPRO_GAIN_CHANNEL_MASK;
+	old_value = pv & SND_BBFPRO_GAIN_VAL_MASK;
 	value = ucontrol->value.integer.value[0];
 
 	if (channel < 2) {
@@ -2789,7 +2790,7 @@ static int snd_bbfpro_gain_put(struct snd_kcontrol *kcontrol,
 
 static int snd_bbfpro_gain_resume(struct usb_mixer_elem_list *list)
 {	
-	int channel, pv, value;
+	int pv, channel, value;
 
 	struct snd_kcontrol *kctl = list->kctl;
 
