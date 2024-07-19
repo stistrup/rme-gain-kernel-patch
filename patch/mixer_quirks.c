@@ -2915,13 +2915,13 @@ static int snd_bbfpro_ctl_add(struct usb_mixer_interface *mixer, u8 reg,
 		&knew, NULL);
 }
 
-static int snd_bbfpro_gain_add(struct usb_mixer_interface *mixer, u8 channel,
+static int snd_bbfpro_gain_add(struct usb_mixer_interface *mixer, u16 channel,
                                char *name)
 {
     struct snd_kcontrol_new knew = snd_bbfpro_gain_control;
 
     knew.name = name;
-    knew.private_value = ((channel & SND_BBFPRO_GAIN_CHANNEL_MASK) << SND_BBFPRO_GAIN_CHANNEL_SHIFT);
+    knew.private_value = channel << SND_BBFPRO_GAIN_CHANNEL_SHIFT;
 
     return add_single_ctl_with_resume(mixer, 0, snd_bbfpro_gain_resume,
         &knew, NULL);
