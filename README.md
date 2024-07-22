@@ -50,9 +50,9 @@ and\
 8dB = 01000010\
 etc.
 
-My only way to make sense of this is that it's split up like that for "fine" control going by the sequence explained above, and "coarse" control only changing the 5 lowest-order bits, effectivly incraments 3 dB at time. But i can't find this coarse thing being used anywhere but it's the only way i can make sense of this sequence. 
+The only explenation i can think of is that it's a sort of "fine" and "coarse" control. The fine controle going by the sequence explained above, and coarse control only changing the 5 lowest-order bits, effectivly incramenting 3 dB at time. I can't find this coarse thing being used anywhere but it's the only way i can make sense of it. 
 
-There is also an anomoly at the last 3dB. The pattern is followed all the way up to 62 db, then 
+There is also an anomoly at the last 3dB. The above pattern is followed all the way up to 62 db, then 
 instead of incrementing the 5 lowest-order bits, it keeps incrementing the 3 highest-order bits. 
 So starting from 60 dB (where the normal pattern begins):
 
