@@ -1,5 +1,5 @@
 Values sent on the usb bus for gain:
-
+(hex values shows 16 bit in wireshark but they are all 00 so i removed them for convenience)
 
 -- MIC --
 
