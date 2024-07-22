@@ -22,7 +22,10 @@ Line-IN4 Gain
 
 ### Findings (if you're interested)
 
+I had TotalMix in a VM and sniffed the USB with wireshark to figure out how the messages is sent.
+
 The values are sent as 16 bit messages as per the USB standard, but only 8 bit are relevant. 
+It sends the messages to the same addresses in CC mode (if the feature is supported).
 
 Line input gain has a 9db range and is set with 0.5 db incraments, so the range is doubled to 0-18 to accound for the half steps.
 
@@ -47,16 +50,11 @@ and\
 8dB = 01000010\
 etc.
 
-My only way to make sense of this is that it's split up like that for "fine" going by the sequence explained above, and "coarse" control only changing the 5 lowest-order bits, effectivly incraments 3 dB at time.
-Maybe this is how the encoder on the physical device works, who knows. 
-
-There's also an anomaly in the last 3dB. The pattern is followed up to 62 dB, then 
-instead of incrementing the 5 lowest-order bits, it keeps incrementing the 3 highest-order bits. 
-Starting from 60 dB where this pattern begins:
+My only way to make sense of this is that it's split up like that for "fine" control going by the sequence explained above, and "coarse" control only changing the 5 lowest-order bits, effectivly incraments 3 dB at time. But i can't find this coarse thing being used anywhere but it's the only way i can make sense of this sequence. 
 
 There is also an anomoly at the last 3dB. The pattern is followed all the way up to 62 db, then 
 instead of incrementing the 5 lowest-order bits, it keeps incrementing the 3 highest-order bits. 
-So starting from 60 dB where this pattern begins:
+So starting from 60 dB (where the normal pattern begins):
 
 00010100\
 00110100\
