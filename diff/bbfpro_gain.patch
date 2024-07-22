@@ -1,5 +1,5 @@
 --- /mnt/storage-c/Kod/c/rme-gain-kernel-patch/original/mixer_quirks.c	2024-07-18 18:10:48.818639948 +0200
-+++ /mnt/storage-c/Kod/c/rme-gain-kernel-patch/patch/mixer_quirks.c	2024-07-22 03:27:22.406502438 +0200
++++ /mnt/storage-c/Kod/c/rme-gain-kernel-patch/patch/mixer_quirks.c	2024-07-22 03:35:13.068949853 +0200
 @@ -2547,8 +2547,16 @@
  #define SND_BBFPRO_MIXER_VAL_MIN 0 // -inf
  #define SND_BBFPRO_MIXER_VAL_MAX 65536 // +6dB
@@ -17,7 +17,7 @@
  #define SND_BBFPRO_USBREQ_MIXER 0x12
  
  static int snd_bbfpro_ctl_update(struct usb_mixer_interface *mixer, u8 reg,
-@@ -2695,6 +2703,123 @@
+@@ -2695,6 +2703,127 @@
  	return snd_bbfpro_ctl_update(list->mixer, reg, idx, value);
  }
  
@@ -135,13 +135,17 @@
 +	channel = (pv >> SND_BBFPRO_GAIN_CHANNEL_SHIFT) & SND_BBFPRO_GAIN_CHANNEL_MASK;
 +	value = pv & SND_BBFPRO_GAIN_VAL_MASK;
 +
++	if (channel < 2) {
++		value = translate_gain_value(value);
++	}
++
 +	return snd_bbfpro_gain_update(list->mixer, channel, value);
 +}
 +
  static int snd_bbfpro_vol_update(struct usb_mixer_interface *mixer, u16 index,
  				 u32 value)
  {
-@@ -2790,6 +2915,15 @@
+@@ -2790,6 +2919,15 @@
  	.put = snd_bbfpro_ctl_put
  };
  
@@ -157,7 +161,7 @@
  static const struct snd_kcontrol_new snd_bbfpro_vol_control = {
  	.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
  	.access = SNDRV_CTL_ELEM_ACCESS_READWRITE,
-@@ -2813,6 +2947,18 @@
+@@ -2813,6 +2951,18 @@
  		&knew, NULL);
  }
  
@@ -176,7 +180,7 @@
  static int snd_bbfpro_vol_add(struct usb_mixer_interface *mixer, u16 index,
  			      char *name)
  {
-@@ -2922,6 +3068,17 @@
+@@ -2922,6 +3072,17 @@
  	if (err < 0)
  		return err;
  

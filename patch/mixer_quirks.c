@@ -2818,7 +2818,7 @@ static int snd_bbfpro_gain_resume(struct usb_mixer_elem_list *list)
 	value = pv & SND_BBFPRO_GAIN_VAL_MASK;
 
 	if (channel < 2) {
-		value = translate_gain_value(value)
+		value = translate_gain_value(value);
 	}
 
 	return snd_bbfpro_gain_update(list->mixer, channel, value);
