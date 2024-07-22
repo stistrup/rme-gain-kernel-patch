@@ -44,7 +44,8 @@ My only way to make sense of this is that it's split up like that for "fine" and
 Maybe this is how the encoder on the physical device works, who knows. 
 
 There is also an anomoly at the last 3dB. The pattern is followed all the way up to 62 db, then instead of incramenting the 5 LSB, it keeps incramenting the 3 MSB:\
-(starting from 60 where the pattern starts)\
+(starting from 60 where the pattern starts)
+
 00010100\
 00110100\
 01010100\
