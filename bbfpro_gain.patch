@@ -1,5 +1,5 @@
---- /mnt/storage-c/Kod/c/rme-gain-kernel-patch/original/mixer_quirks.c	2024-07-18 18:10:48.818639948 +0200
-+++ /mnt/storage-c/Kod/c/rme-gain-kernel-patch/patch/mixer_quirks.c	2024-07-22 03:35:13.068949853 +0200
+--- original/mixer_quirks.c	2024-07-18 18:10:48.818639948 +0200
++++ patch/mixer_quirks.c	2024-07-22 03:35:13.068949853 +0200
 @@ -2547,8 +2547,16 @@
  #define SND_BBFPRO_MIXER_VAL_MIN 0 // -inf
  #define SND_BBFPRO_MIXER_VAL_MAX 65536 // +6dB
