@@ -5,12 +5,8 @@ One missing feature was to set input gain and thats what this patch enables.
 
 ### Info
 
-Line input gain has a 9db range and is set with 0.5 db incraments, 
-and therefore set on the device with a value between 0 and 18.
-
-The mic input gain however is a bit more odd.
-It has a range from 0 to 65 db, and you would think it is set with a value from... well 0 to 65.
-In decimal the sequencd makes no sence at all. In hex there is a pattern, and in binary it makes most sense.
+Line input gain has a 9db range and is set with 0.5 db incraments (0-18 on the usb bus)
+Mic has 0-65 db range but has a quite [odd sequence of messages](https://github.com/stistrup/rme-gain-kernel-patch/blob/main/docs/usb%20gain%20messages.txt) which makes more sense in binary.
 
 There is 2 bits that are "rotating" between 00000000 00100000 and 01000000. 
 And after each rotation the 5 least significant bits are incramented by 1. 
@@ -31,8 +27,7 @@ and\
 01000010\
 etc.
 
-it goes all the way up to 62, then it strays of this pattern.
-If you look inside the [usb message list](https://github.com/stistrup/rme-gain-kernel-patch/blob/main/docs/usb%20gain%20messages.txt), that anomoly makes sense if you look at the hex values.
+it goes all the way up to 62, then it strays of this pattern for the last 3 values. Which makes sense in the hexadecial sequence in the [messages](https://github.com/stistrup/rme-gain-kernel-patch/blob/main/docs/usb%20gain%20messages.txt) 
 
 My only way to make sense of this is that it's split up like that for "fine" and "coarse" control. Who knows. 
 
