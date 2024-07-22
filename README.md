@@ -1,6 +1,6 @@
 ## RME Babyface pro input gain support
 
-A continuation on [MrBollies](https://github.com/MrBollie) work on support for the RME Babyface Pro (that is now in the mainline kernel).
+A continuation on [MrBollies](https://github.com/MrBollie) work on support for the RME Babyface Pro [(that is now in the mainline kernel)](https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/sound/usb?h=v6.10-rc7&id=3e8f3bd047163d30fb1ad32ca7e4628921555c09).
 One missing feature was to set input gain and thats what this patch enables. 
 
 This patch goes into sound/usb and patches mixer_quirks.c. Use -p1 when patching.
@@ -25,8 +25,4 @@ If you look inside doc/usb gain messages.txt that anomoly makes sense if you loo
 
 My only way to make sense of this is that it's made for "fine" and "coarse" control. Who knows. 
 
-Links:
-
-[MrBollies original patch](https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/sound/usb?h=v6.10-rc7&id=3e8f3bd047163d30fb1ad32ca7e4628921555c09)
-
-https://github.com/agfline/RME-Fireface-UC-Drivers
+Some help/inspiration also taken from a [reverse engineering of the RME-Fireface-UC](https://github.com/agfline/RME-Fireface-UC-Drivers)
