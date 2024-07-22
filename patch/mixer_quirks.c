@@ -2773,7 +2773,7 @@ static int snd_bbfpro_gain_info(struct snd_kcontrol *kcontrol,
 static int snd_bbfpro_gain_put(struct snd_kcontrol *kcontrol,
                                struct snd_ctl_elem_value *ucontrol)
 {
-	int pv, channel, old_value, value, err;
+	int pv, channel, old_value, value_to_store, value_to_send, err;
 
 	struct usb_mixer_elem_list *list = snd_kcontrol_chip(kcontrol);
 	struct usb_mixer_interface *mixer = list->mixer;
@@ -2781,28 +2781,29 @@ static int snd_bbfpro_gain_put(struct snd_kcontrol *kcontrol,
 	pv = kcontrol->private_value;
 	channel = (pv >> SND_BBFPRO_GAIN_CHANNEL_SHIFT) & SND_BBFPRO_GAIN_CHANNEL_MASK;
 	old_value = pv & SND_BBFPRO_GAIN_VAL_MASK;
-	value = ucontrol->value.integer.value[0];
+	value_to_store = ucontrol->value.integer.value[0];
+	value_to_send = value_to_store;
 
 	if (channel < 2) {
-		if (value > SND_BBFPRO_GAIN_VAL_MIC_MAX)
+		if (value_to_send > SND_BBFPRO_GAIN_VAL_MIC_MAX)
 			return -EINVAL;
 
-		value = translate_gain_value(value);
+		value_to_send = translate_gain_value(value_to_send);
 	} else {
-		if (value > SND_BBFPRO_GAIN_VAL_LINE_MAX)
+		if (value_to_send > SND_BBFPRO_GAIN_VAL_LINE_MAX)
 			return -EINVAL;
 	}
 
-	if (value == old_value)
+	if (value_to_send == old_value)
 		return 0;
 
-	err = snd_bbfpro_gain_update(mixer, channel, value);
+	err = snd_bbfpro_gain_update(mixer, channel, value_to_send);
 	if (err < 0)
 		return err;
 
 	kcontrol->private_value = ((channel & SND_BBFPRO_GAIN_CHANNEL_MASK) 
 				<< SND_BBFPRO_GAIN_CHANNEL_SHIFT) 
-				| (value & SND_BBFPRO_GAIN_VAL_MASK);
+				| (value_to_store & SND_BBFPRO_GAIN_VAL_MASK);
 	return 1;
 }
 
