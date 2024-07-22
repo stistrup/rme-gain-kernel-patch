@@ -1,12 +1,32 @@
 ## RME Babyface pro input gain support
 
-Attempt to patch the kernel to add support for gain on my RME Babyface Pro card. 
-Links:
+A continuation on [MrBollies](https://github.com/MrBollie) work on support for the RME Babyface Pro.
+One missing feature was to set input gain and thats what this patch enables. 
+
+Line input gain has a 9db range and is set with 0.5 db incraments, 
+and therefore set on the device with a value between 0 and 18.
+
+The mic input gain however is a bit more odd.
+It has a range from 0 to 65 db, and you would think it is set with a value from... well 0 to 65.
+In decimal the sequencd makes no sence at all. In hex there is a pattern, and in binary it makes most sense.
+
+There is 2 bits that are "rotating" between 00000000 00100000 and 01000000. 
+And after each rotation the 5 least significant bits are incramented by 1. 
+
+So first 00000000, 00100000, 01000000
+then 00000001, 00100001, 01000001
+and 00000010, 00100010, 01000010
+etc.
+
+it goes all the way up to 62, then it strays of this pattern.
+If you look inside doc/usb gain messages.txt that anomoly makes sense if you look at the pattern in the hex values.
+
+Anyways.. This patch goes into sound/usb and patches mixer_quirks.c. Use -p1 when patching. 
+
+Sources:
 
 https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/sound/usb?h=v6.10-rc7&id=3e8f3bd047163d30fb1ad32ca7e4628921555c09
 
 https://github.com/agfline/RME-Fireface-UC-Drivers
 
 https://github.com/MrBollie/RME-Babyace-Pro-ALSA-Mixer-Patch
-
-Not really sure what i'm doing but you gotta learn right. This is mostly an experiment with the help of Master Andy and chatgpt
