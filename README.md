@@ -6,6 +6,8 @@ One missing feature was to set input gain and thats what this patch enables for 
 
 Huge thanks to Andypoo which basically helped me through the whole process of making this and patching the kernel.
 
+---
+
 ### Patching
 
 Navigate to sound/usb in kernel source tree, and apply this patch (this patches mixer_quirks.c)\
@@ -16,35 +18,45 @@ Mic-AN2 Gain\
 Line-IN3 Gain\
 Line-IN4 Gain
 
-### Info
+---
 
-Line input gain has a 9db range and is set with 0.5 db incraments (0-18 on the usb bus)
+### Findings (if you're interested)
+
+The values are sent as 16 bit messages as per the USB standard, but only 8 bit are relevant. 
+
+Line input gain has a 9db range and is set with 0.5 db incraments, so the range is doubled to 0-18 to accound for the half steps.
+
 Mic has 0-65 db range but has a quite [odd sequence of messages](https://github.com/stistrup/rme-gain-kernel-patch/blob/main/docs/usb%20gain%20messages.txt) which makes more sense in binary.
 
-The 3 MSB are "rotating" between 00000000 00100000 and 01000000. 
-And after each rotation the 5 LSB are incramented by 1. 
+The 3 highest-order bits are "rotating" between 000xxxxx, 001xxxxx, and 010xxxxx, then back to 000xxxxx. 
+After each rotation, the 5 lowest-order bits are incremented by 1, xxx00001, xxx00010, xxx00011 etc.
 
-So first (starting at 0dB)\
-00000000\
-00100000\
-01000000
+So:\
+0dB = 00000000\
+1dB = 00100000\
+2dB = 01000000
 
 then\
-00000001\
-00100001\
-01000001
+3dB = 00000001\
+4dB = 00100001\
+5dB = 01000001
 
 and\
-00000010\
-00100010\
-01000010\
+6dB = 00000010\
+7dB = 00100010\
+8dB = 01000010\
 etc.
 
-My only way to make sense of this is that it's split up like that for "fine" and "coarse" control. Where only changing the 5 LSB effectivly incraments 3 dB at time.
+My only way to make sense of this is that it's split up like that for "fine" going by the sequence explained above, and "coarse" control only changing the 5 lowest-order bits, effectivly incraments 3 dB at time.
 Maybe this is how the encoder on the physical device works, who knows. 
 
-There is also an anomoly at the last 3dB. The pattern is followed all the way up to 62 db, then instead of incramenting the 5 LSB, it keeps incramenting the 3 MSB:\
-(starting from 60 where the pattern starts)
+There's also an anomaly in the last 3dB. The pattern is followed up to 62 dB, then 
+instead of incrementing the 5 lowest-order bits, it keeps incrementing the 3 highest-order bits. 
+Starting from 60 dB where this pattern begins:
+
+There is also an anomoly at the last 3dB. The pattern is followed all the way up to 62 db, then 
+instead of incrementing the 5 lowest-order bits, it keeps incrementing the 3 highest-order bits. 
+So starting from 60 dB where this pattern begins:
 
 00010100\
 00110100\
@@ -53,6 +65,6 @@ There is also an anomoly at the last 3dB. The pattern is followed all the way up
 10010100\
 10110100
 
-I guess it doesn't really matter what RME had in mind, as long as it works in the end.
+I guess it doesn't really matter what RME had in mind, as long as it works.
 
 Some help/inspiration also taken from a [reverse engineering of the RME-Fireface-UC](https://github.com/agfline/RME-Fireface-UC-Drivers)
