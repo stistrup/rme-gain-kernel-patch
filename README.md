@@ -7,4 +7,6 @@ https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/sound/
 
 https://github.com/agfline/RME-Fireface-UC-Drivers
 
+https://github.com/MrBollie/RME-Babyace-Pro-ALSA-Mixer-Patch
+
 Not really sure what i'm doing but you gotta learn right. This is mostly an experiment with the help of Master Andy and chatgpt
