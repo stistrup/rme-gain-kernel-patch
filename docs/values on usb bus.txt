@@ -1,9 +1,8 @@
-Values sent on the usb bus for gain:
-(hex values shows 16 bit in wireshark but they are all 00 so i removed them for convenience)
+Gain values sent from TotalMix to device on the usb bus.
 
--- MIC --
+-- MIC 1/2 --
 
-Totalmix    wValue (hex)    wValue (binary)    wValue (decimal)
+Db          wValue (hex)    wValue (binary)    wValue (decimal)
 0           0x00            00000000           0
 1           0x20            00100000           32
 2           0x40            01000000           64
@@ -73,9 +72,9 @@ Totalmix    wValue (hex)    wValue (binary)    wValue (decimal)
 
 
 
--- LINE --
+-- LINE 3/4 -
 
-Totalmix    wValue (hex)    wValue (binary)    wValue (decimal)
+Db          wValue (hex)    wValue (binary)    wValue (decimal)
 0           0x00            00000000           0
 0.5         0x01            00000001           1
 1           0x02            00000010           2
