@@ -45,11 +45,13 @@ Maybe this is how the encoder on the physical device works, who knows.
 
 There is also an anomoly at the last 3dB. The pattern is followed all the way up to 62 db, then instead of incramenting the 5 LSB, it keeps incramenting the 3 MSB:\
 (starting from 60 where the pattern starts)\
-00010100
-00110100
-01010100
-01110100
-10010100
+00010100\
+00110100\
+01010100\
+01110100\
+10010100\
 10110100
+
+I guess it doesn't really matter what RME had in mind, as long as it works in the end.
 
 Some help/inspiration also taken from a [reverse engineering of the RME-Fireface-UC](https://github.com/agfline/RME-Fireface-UC-Drivers)
