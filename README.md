@@ -4,7 +4,17 @@
 A continuation on [MrBollies](https://github.com/MrBollie) work on support for the RME Babyface Pro [(that is now in the mainline kernel)](https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/sound/usb?h=v6.10-rc7&id=3e8f3bd047163d30fb1ad32ca7e4628921555c09).
 One missing feature was to set input gain and thats what this patch enables for Mic and Line in. 
 
-Huge thanks to Andypoo which basically guided me through this whole process of patching the kernel and figuring out the code and helped me write it.
+Huge thanks to Andypoo which basically helped me through the whole process of making this and patching the kernel.
+
+### Patching
+
+Navigate to sound/usb in kernel source tree, and apply this patch (this patches mixer_quirks.c)\
+Once patched, compile sound/usb module, install or load module and these controls should show up in alsa and be controllable:
+
+Mic-AN1 Gain\
+Mic-AN2 Gain\
+Line-IN3 Gain\
+Line-IN4 Gain
 
 ### Info
 
