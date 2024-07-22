@@ -2703,8 +2703,13 @@ static int snd_bbfpro_ctl_resume(struct usb_mixer_elem_list *list)
 	return snd_bbfpro_ctl_update(list->mixer, reg, idx, value);
 }
 
+
 static u8 translate_gain_value(u8 value)
 {
+	// Gain is set by rotating rotating 2 bits, 00000000 00100000 01000000
+	// For each rotation, incrament 1 in the 5 least significant bits
+	// e.g. after 01000000 comes 00000001, 00100001, 01000001, then 00000002 etc.
+
     if (value <= 62) {
         u8 base = value / 3;
         u8 remainder = value % 3;
@@ -2719,11 +2724,8 @@ static u8 translate_gain_value(u8 value)
 static int snd_bbfpro_gain_update(struct usb_mixer_interface *mixer, u8 channel, u8 gain)
 {
 	int err;
-	u8 translated_gain;
-	
-	struct snd_usb_audio *chip = mixer->chip;
 
-	translated_gain = translate_gain_value(gain);
+	struct snd_usb_audio *chip = mixer->chip;
 
 	err = snd_usb_lock_shutdown(chip);
 	if (err < 0)
@@ -2733,7 +2735,7 @@ static int snd_bbfpro_gain_update(struct usb_mixer_interface *mixer, u8 channel,
 				usb_sndctrlpipe(chip->dev, 0),
 				SND_BBFPRO_USBREQ_GAIN,
 				USB_DIR_OUT | USB_TYPE_VENDOR | USB_RECIP_DEVICE,
-				translated_gain, channel, NULL, 0);
+				gain, channel, NULL, 0);
 
 	snd_usb_unlock_shutdown(chip);
 	return err;
@@ -2742,10 +2744,7 @@ static int snd_bbfpro_gain_update(struct usb_mixer_interface *mixer, u8 channel,
 static int snd_bbfpro_gain_get(struct snd_kcontrol *kcontrol,
                                struct snd_ctl_elem_value *ucontrol)
 {
-	int value, pv;
-
-	pv = kcontrol->private_value;
-	value = kcontrol->private_value & SND_BBFPRO_GAIN_VAL_MASK;
+	int value = kcontrol->private_value & SND_BBFPRO_GAIN_VAL_MASK;
 	ucontrol->value.integer.value[0] = value;
 	return 0;
 }
@@ -2787,6 +2786,8 @@ static int snd_bbfpro_gain_put(struct snd_kcontrol *kcontrol,
 	if (channel < 2) {
 		if (value > SND_BBFPRO_GAIN_VAL_MIC_MAX)
 			return -EINVAL;
+
+		value = translate_gain_value(value);
 	} else {
 		if (value > SND_BBFPRO_GAIN_VAL_LINE_MAX)
 			return -EINVAL;
