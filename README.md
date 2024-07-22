@@ -1,8 +1,8 @@
-## Kernel patch for RME Babyface pro
-### to support input gain on Mic and Line in
+## Kernel patch for RME Babyface pro to support input gain
+
 
 A continuation on [MrBollies](https://github.com/MrBollie) work on support for the RME Babyface Pro [(that is now in the mainline kernel)](https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/sound/usb?h=v6.10-rc7&id=3e8f3bd047163d30fb1ad32ca7e4628921555c09).
-One missing feature was to set input gain and thats what this patch enables. 
+One missing feature was to set input gain and thats what this patch enables for Mic and Line in. 
 
 ### Info
 
