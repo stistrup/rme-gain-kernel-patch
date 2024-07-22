@@ -2,7 +2,7 @@
 
 
 A continuation on [MrBollies](https://github.com/MrBollie) work on support for the RME Babyface Pro [(that is now in the mainline kernel)](https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/sound/usb?h=v6.10-rc7&id=3e8f3bd047163d30fb1ad32ca7e4628921555c09).
-One missing feature was to set input gain and thats what this patch enables for Mic and Line in. 
+One missing feature was to set input gain and thats what this patch enables for Mic and Line in.
 
 Huge thanks to Andypoo which basically helped me through the whole process of making this and patching the kernel.
 
@@ -22,10 +22,10 @@ Line-IN4 Gain
 
 ### Findings (if you're interested)
 
-I had TotalMix in a VM and sniffed the USB with wireshark to figure out how the messages is sent.
+I had TotalMix on windows in a VM and sniffed the USB with wireshark to figure out how the messages are sent.
 
-The values are sent as 16 bit messages as per the USB standard, but only 8 bit are relevant. 
-It sends the messages to the same addresses in CC mode (if the feature is supported).
+The values are sent as 16 bit messages as per the USB standard, but only 8 bits are relevant. 
+It sends the messages to the same addresses in CC mode (if the feature is supported) from what i've been able to dig out.
 
 Line input gain has a 9db range and is set with 0.5 db incraments, so the range is doubled to 0-18 to accound for the half steps.
 
