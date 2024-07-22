@@ -34,6 +34,6 @@ etc.
 it goes all the way up to 62, then it strays of this pattern.
 If you look inside the [usb message list](https://github.com/stistrup/rme-gain-kernel-patch/blob/main/docs/usb%20gain%20messages.txt), that anomoly makes sense if you look at the hex values.
 
-My only way to make sense of this is that it's made for "fine" and "coarse" control. Who knows. 
+My only way to make sense of this is that it's split up like that for "fine" and "coarse" control. Who knows. 
 
 Some help/inspiration also taken from a [reverse engineering of the RME-Fireface-UC](https://github.com/agfline/RME-Fireface-UC-Drivers)
