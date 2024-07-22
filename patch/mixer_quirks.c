@@ -2552,7 +2552,7 @@ enum {
 #define SND_BBFPRO_GAIN_VAL_MASK 0x7f
 #define SND_BBFPRO_GAIN_VAL_MIN 0
 #define SND_BBFPRO_GAIN_VAL_MIC_MAX 65
-#define SND_BBFPRO_GAIN_VAL_LINE_MAX 9
+#define SND_BBFPRO_GAIN_VAL_LINE_MAX 18
 
 #define SND_BBFPRO_USBREQ_CTL_REG1 0x10
 #define SND_BBFPRO_USBREQ_CTL_REG2 0x17
@@ -2703,11 +2703,27 @@ static int snd_bbfpro_ctl_resume(struct usb_mixer_elem_list *list)
 	return snd_bbfpro_ctl_update(list->mixer, reg, idx, value);
 }
 
+static u8 translate_gain_value(u8 value)
+{
+    if (value <= 62) {
+        u8 base = value / 3;
+        u8 remainder = value % 3;
+        return (remainder << 5) | (base & 0x1F);
+    } else {
+        // Special cases for 63, 64, 65
+        static const u8 special_values[] = {0x74, 0x94, 0xb4};
+        return special_values[value - 63];
+    }
+}
+
 static int snd_bbfpro_gain_update(struct usb_mixer_interface *mixer, u8 channel, u8 gain)
 {
 	int err;
+	u8 translated_gain;
 	
 	struct snd_usb_audio *chip = mixer->chip;
+
+	translated_gain = translate_gain_value(gain);
 
 	err = snd_usb_lock_shutdown(chip);
 	if (err < 0)
@@ -2717,7 +2733,7 @@ static int snd_bbfpro_gain_update(struct usb_mixer_interface *mixer, u8 channel,
 				usb_sndctrlpipe(chip->dev, 0),
 				SND_BBFPRO_USBREQ_GAIN,
 				USB_DIR_OUT | USB_TYPE_VENDOR | USB_RECIP_DEVICE,
-				gain, channel, NULL, 0);
+				translated_gain, channel, NULL, 0);
 
 	snd_usb_unlock_shutdown(chip);
 	return err;
