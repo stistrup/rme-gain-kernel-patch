@@ -27,8 +27,6 @@ My only way to make sense of this is that it's made for "fine" and "coarse" cont
 
 Links:
 
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/sound/usb?h=v6.10-rc7&id=3e8f3bd047163d30fb1ad32ca7e4628921555c09
+[MrBollies original patch](https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/sound/usb?h=v6.10-rc7&id=3e8f3bd047163d30fb1ad32ca7e4628921555c09)
 
 https://github.com/agfline/RME-Fireface-UC-Drivers
-
-https://github.com/MrBollie/RME-Babyace-Pro-ALSA-Mixer-Patch
