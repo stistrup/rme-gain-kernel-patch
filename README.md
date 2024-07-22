@@ -1,6 +1,6 @@
 ## RME Babyface pro input gain support
 
-A continuation on [MrBollies](https://github.com/MrBollie) work on support for the RME Babyface Pro.
+A continuation on [MrBollies](https://github.com/MrBollie) work on support for the RME Babyface Pro (that is now in the mainline kernel).
 One missing feature was to set input gain and thats what this patch enables. 
 
 Line input gain has a 9db range and is set with 0.5 db incraments, 
