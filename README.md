@@ -3,6 +3,8 @@
 A continuation on [MrBollies](https://github.com/MrBollie) work on support for the RME Babyface Pro (that is now in the mainline kernel).
 One missing feature was to set input gain and thats what this patch enables. 
 
+This patch goes into sound/usb and patches mixer_quirks.c. Use -p1 when patching.
+
 Line input gain has a 9db range and is set with 0.5 db incraments, 
 and therefore set on the device with a value between 0 and 18.
 
@@ -20,8 +22,6 @@ etc.
 
 it goes all the way up to 62, then it strays of this pattern.
 If you look inside doc/usb gain messages.txt that anomoly makes sense if you look at the pattern in the hex values.
-
-Anyways.. This patch goes into sound/usb and patches mixer_quirks.c. Use -p1 when patching. 
 
 Sources:
 
