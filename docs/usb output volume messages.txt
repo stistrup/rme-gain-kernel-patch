@@ -1,4 +1,8 @@
-Changing headphones in Titalmix:
+Changing headphones in Totalmix:
+
+sends messages to address 0x1a (26) and 0x12 (18)
+
+sends
 
 --- bRequest 26 ----
 
@@ -112,3 +116,10 @@ dB          Hex
 4.9, 5.1    0x00fd
 5.4, 5.7    0x00fe
 6.0         0x00ff
+
+
+--- bRequest 18 ----
+
+lowest:
+wValue = 0x0000
+wIndex = 995 and 994
