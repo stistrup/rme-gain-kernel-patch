@@ -1,5 +1,5 @@
 --- original/mixer_quirks.c	2024-07-18 18:10:48.818639948 +0200
-+++ patch/mixer_quirks.c	2024-07-26 04:25:31.425007914 +0200
++++ patch/mixer_quirks.c	2024-07-26 04:31:25.917810842 +0200
 @@ -2547,8 +2547,16 @@
  #define SND_BBFPRO_MIXER_VAL_MIN 0 // -inf
  #define SND_BBFPRO_MIXER_VAL_MAX 65536 // +6dB
@@ -128,16 +128,7 @@
  static int snd_bbfpro_vol_update(struct usb_mixer_interface *mixer, u16 index,
  				 u32 value)
  {
-@@ -2714,6 +2826,8 @@
- 	usb_idx = idx | (v & 0x3) << 14;
- 	usb_val = (v >> 2) & 0xffff;
- 
-+	printk("ROUTING UPDATE: Sending normal message - idx: 0x%04x, new_val: 0x%04x\n", usb_idx, usb_val);
-+
- 	err = snd_usb_ctl_msg(chip->dev,
- 			      usb_sndctrlpipe(chip->dev, 0),
- 			      SND_BBFPRO_USBREQ_MIXER,
-@@ -2790,6 +2904,15 @@
+@@ -2790,6 +2902,15 @@
  	.put = snd_bbfpro_ctl_put
  };
  
@@ -153,7 +144,7 @@
  static const struct snd_kcontrol_new snd_bbfpro_vol_control = {
  	.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
  	.access = SNDRV_CTL_ELEM_ACCESS_READWRITE,
-@@ -2813,6 +2936,18 @@
+@@ -2813,6 +2934,18 @@
  		&knew, NULL);
  }
  
@@ -172,15 +163,7 @@
  static int snd_bbfpro_vol_add(struct usb_mixer_interface *mixer, u16 index,
  			      char *name)
  {
-@@ -2838,6 +2973,7 @@
- 		"AN1", "AN2", "PH3", "PH4", "AS1", "AS2", "ADAT3", "ADAT4",
- 		"ADAT5", "ADAT6", "ADAT7", "ADAT8"};
- 
-+	// Routing Volume
- 	for (o = 0 ; o < 12 ; ++o) {
- 		for (i = 0 ; i < 12 ; ++i) {
- 			// Line routing
-@@ -2922,6 +3058,17 @@
+@@ -2922,6 +3055,17 @@
  	if (err < 0)
  		return err;
  
