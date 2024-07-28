@@ -1,12 +1,3 @@
-Changing headphones in Totalmix:
-
-sends messages to address 0x1a (26) and 0x12 (18) but only 0x12 seems to bee needed to set volume.
-0x1a only seemed to be sent on first 6 channels, main, headphones and AS.
-But diddn't do anything when i sent the messages even how much i verified 
-they matched the TotalMix messages so not sure what they are for.
-They needed a logarithmic conversion from the decimal values sent on 0x12 anyways so another reason to skip it, 
-as it proved troublesome for me to implement in the patch due to limitations of math utilities (or just lack of my knowlage).
-
 Channels are offset 992, so channels are defined:
 
 MAIN (AN 1/2):
