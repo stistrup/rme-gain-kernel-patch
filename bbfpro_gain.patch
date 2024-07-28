@@ -1,6 +1,14 @@
 --- original/mixer_quirks.c	2024-07-18 18:10:48.818639948 +0200
-+++ patch/mixer_quirks.c	2024-07-26 04:31:25.917810842 +0200
-@@ -2547,8 +2547,16 @@
++++ patch/mixer_quirks.c	2024-07-28 07:41:12.953628049 +0200
+@@ -2541,14 +2541,23 @@
+ #define SND_BBFPRO_CTL_REG2_PAD_AN1 4
+ #define SND_BBFPRO_CTL_REG2_PAD_AN2 5
+ 
+-#define SND_BBFPRO_MIXER_IDX_MASK 0x1ff
++#define SND_BBFPRO_MIXER_MAIN_OUT_CH_OFFSET 992
++#define SND_BBFPRO_MIXER_IDX_MASK 0x3ff
+ #define SND_BBFPRO_MIXER_VAL_MASK 0x3ffff
+ #define SND_BBFPRO_MIXER_VAL_SHIFT 9
  #define SND_BBFPRO_MIXER_VAL_MIN 0 // -inf
  #define SND_BBFPRO_MIXER_VAL_MAX 65536 // +6dB
  
@@ -17,7 +25,7 @@
  #define SND_BBFPRO_USBREQ_MIXER 0x12
  
  static int snd_bbfpro_ctl_update(struct usb_mixer_interface *mixer, u8 reg,
-@@ -2695,6 +2703,110 @@
+@@ -2695,6 +2704,110 @@
  	return snd_bbfpro_ctl_update(list->mixer, reg, idx, value);
  }
  
@@ -128,7 +136,7 @@
  static int snd_bbfpro_vol_update(struct usb_mixer_interface *mixer, u16 index,
  				 u32 value)
  {
-@@ -2790,6 +2902,15 @@
+@@ -2790,6 +2903,15 @@
  	.put = snd_bbfpro_ctl_put
  };
  
@@ -144,7 +152,7 @@
  static const struct snd_kcontrol_new snd_bbfpro_vol_control = {
  	.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
  	.access = SNDRV_CTL_ELEM_ACCESS_READWRITE,
-@@ -2813,6 +2934,18 @@
+@@ -2813,6 +2935,18 @@
  		&knew, NULL);
  }
  
@@ -163,10 +171,27 @@
  static int snd_bbfpro_vol_add(struct usb_mixer_interface *mixer, u16 index,
  			      char *name)
  {
-@@ -2922,6 +3055,17 @@
- 	if (err < 0)
- 		return err;
+@@ -2838,6 +2972,15 @@
+ 		"AN1", "AN2", "PH3", "PH4", "AS1", "AS2", "ADAT3", "ADAT4",
+ 		"ADAT5", "ADAT6", "ADAT7", "ADAT8"};
  
++	// Main out volume
++	for (i = 0 ; i < 12 ; ++i) {
++		snprintf(name, sizeof(name), "Main-Out %s", output[i]);
++		err = snd_bbfpro_vol_add(mixer, i | SND_BBFPRO_MIXER_MAIN_OUT_CH_OFFSET, name);
++		if (err < 0)
++			return err;
++	}
++
++	// Routing Volume
+ 	for (o = 0 ; o < 12 ; ++o) {
+ 		for (i = 0 ; i < 12 ; ++i) {
+ 			// Line routing
+@@ -2860,6 +3003,18 @@
+ 		}
+ 	}
+ 
++	// Input gain
 +	for (i = 0; i < 4; i++) {
 +		if (i < 2) {
 +			snprintf(name, sizeof(name), "Mic-AN%d Gain", i + 1);
@@ -178,6 +203,6 @@
 +			return err;
 +	}
 +
- 	return 0;
- }
- 
+ 	// Control Reg 1
+ 	err = snd_bbfpro_ctl_add(mixer, SND_BBFPRO_CTL_REG1,
+ 				 SND_BBFPRO_CTL_REG1_CLK_OPTICAL,
