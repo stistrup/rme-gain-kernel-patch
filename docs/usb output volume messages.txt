@@ -25,7 +25,7 @@ adat 7/8:
 0000001111101011
 
 
-Observed values (i did 1 db incraments here, but it supports 0.5 incraments which you can see in the hex values bumping 2 steps each db incrament)
+Observed values (i did 1 db incraments here, but it supports 0.5 incraments)
 
 
 (hex value sent on 0x1a, and decimal value sent on 0x12, decibel is whats set on totalmix)
