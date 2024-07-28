@@ -1,6 +1,5 @@
 ## Kernel patch for RME Babyface pro to support input gain and main output on linux
 
-
 A continuation on [MrBollies](https://github.com/MrBollie) work on support for the RME Babyface Pro [(that is now in the mainline kernel)](https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/sound/usb?h=v6.10-rc7&id=3e8f3bd047163d30fb1ad32ca7e4628921555c09).
 One missing feature was to set input gain and thats what this patch enables for Mic and Line in.
 
@@ -18,9 +17,24 @@ Mic-AN2 Gain\
 Line-IN3 Gain\
 Line-IN4 Gain
 
+Main-Out AN1\
+Main-Out AN2\
+Main-Out PH1\
+Main-Out PH2\
+Main-Out AS1\
+Main-Out AS2\
+Main-Out ADAT3\
+Main-Out ADAT4\
+Main-Out ADAT5\
+Main-Out ADAT6\
+Main-Out ADAT7\
+Main-Out ADAT8
+
 ---
 
 ### Findings (if you're interested)
+
+## GAIN
 
 I had TotalMix on windows in a VM and sniffed the USB with wireshark to figure out how the messages are sent.
 
@@ -64,5 +78,12 @@ So starting from 60 dB (where the normal pattern begins):
 10110100
 
 I guess it doesn't really matter what RME had in mind, as long as it works.
+
+## MAIN OUT
+
+This basically mimics the existing routing messages, apart from main out being offset and starts at 992.\
+In other words, sent on address 0x12 with a value between 0 and 65536 (-inf to +6 dB).\
+When setting the output volume, i noticed that it's set logarit
+I've also observed messages from the first 6 channels, (AN 1/2, PH 1/2 and AS 1/2) sending messages to 0x1a (same channel as gain) but did not do anything when i sent it regardless of how many times i verified the messages was the same. I first thought it would control the leds, but as it diddn't do anything that i could find, and that the messages on 0x12 changed the volume as expected, i opted to skip it.
 
 Some help/inspiration also taken from a [reverse engineering of the RME-Fireface-UC](https://github.com/agfline/RME-Fireface-UC-Drivers)
