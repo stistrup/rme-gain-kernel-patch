@@ -27,7 +27,7 @@ I had TotalMix on windows in a VM and sniffed the USB with wireshark to figure o
 The values are sent as 16 bit messages as per the USB standard, but only 8 bits are relevant. 
 It sends the messages to the same addresses in CC mode (if the feature is supported) from what i've been able to dig out.
 
-Line input gain has a 9db range and is set with 0.5 db incraments, so the range is doubled to 0-18 to accound for the half steps.
+Line input gain has a 9db range and is set with 0.5 db incraments, so the range is doubled to 0-18 to account for the half steps.
 
 Mic has 0-65 db range but has a quite [odd sequence of messages](https://github.com/stistrup/rme-gain-kernel-patch/blob/main/docs/usb%20gain%20messages.txt) which makes more sense in binary.
 
