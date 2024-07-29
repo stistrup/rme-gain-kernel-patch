@@ -1,5 +1,5 @@
 --- a/sound/usb/mixer_quirks.c	2024-07-18 18:10:48.818639948 +0200
-+++ b/sound/usb/mixer_quirks.c	2024-07-29 08:57:54.026989804 +0200
++++ b/sound/usb/mixer_quirks.c	2024-07-29 22:57:22.805324566 +0200
 @@ -2541,14 +2541,23 @@
  #define SND_BBFPRO_CTL_REG2_PAD_AN1 4
  #define SND_BBFPRO_CTL_REG2_PAD_AN2 5
@@ -17,7 +17,7 @@
 +#define SND_BBFPRO_GAIN_VAL_MASK 0x7f
 +#define SND_BBFPRO_GAIN_VAL_MIN 0
 +#define SND_BBFPRO_GAIN_VAL_MIC_MAX 65
-+#define SND_BBFPRO_GAIN_VAL_LINE_MAX 18
++#define SND_BBFPRO_GAIN_VAL_LINE_MAX 18 // 9db in 0.5db incraments
 +
  #define SND_BBFPRO_USBREQ_CTL_REG1 0x10
  #define SND_BBFPRO_USBREQ_CTL_REG2 0x17
@@ -195,9 +195,9 @@
 +	// Input gain
 +	for (i = 0; i < 4; i++) {
 +		if (i < 2) {
-+			snprintf(name, sizeof(name), "Mic-AN%d Gain", i + 1);
++			snprintf(name, sizeof(name), "Mic-%s Gain", input[i]);
 +		} else {
-+			snprintf(name, sizeof(name), "Line-IN%d Gain", i + 1);
++			snprintf(name, sizeof(name), "Line-%s Gain", input[i]);
 +		}
 +		err = snd_bbfpro_gain_add(mixer, i, name);
 +		if (err < 0)
