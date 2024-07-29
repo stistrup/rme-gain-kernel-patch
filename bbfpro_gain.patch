@@ -1,5 +1,5 @@
 --- original/mixer_quirks.c	2024-07-18 18:10:48.818639948 +0200
-+++ patch/mixer_quirks.c	2024-07-28 07:41:12.953628049 +0200
++++ patch/mixer_quirks.c	2024-07-29 08:57:54.026989804 +0200
 @@ -2541,14 +2541,23 @@
  #define SND_BBFPRO_CTL_REG2_PAD_AN1 4
  #define SND_BBFPRO_CTL_REG2_PAD_AN2 5
@@ -171,26 +171,27 @@
  static int snd_bbfpro_vol_add(struct usb_mixer_interface *mixer, u16 index,
  			      char *name)
  {
-@@ -2838,6 +2972,15 @@
+@@ -2838,6 +2972,7 @@
  		"AN1", "AN2", "PH3", "PH4", "AS1", "AS2", "ADAT3", "ADAT4",
  		"ADAT5", "ADAT6", "ADAT7", "ADAT8"};
+ 
++	// Routing Volume
+ 	for (o = 0 ; o < 12 ; ++o) {
+ 		for (i = 0 ; i < 12 ; ++i) {
+ 			// Line routing
+@@ -2860,6 +2995,27 @@
+ 		}
+ 	}
  
 +	// Main out volume
 +	for (i = 0 ; i < 12 ; ++i) {
 +		snprintf(name, sizeof(name), "Main-Out %s", output[i]);
++		// Main outs are offset to 992
 +		err = snd_bbfpro_vol_add(mixer, i | SND_BBFPRO_MIXER_MAIN_OUT_CH_OFFSET, name);
 +		if (err < 0)
 +			return err;
 +	}
 +
-+	// Routing Volume
- 	for (o = 0 ; o < 12 ; ++o) {
- 		for (i = 0 ; i < 12 ; ++i) {
- 			// Line routing
-@@ -2860,6 +3003,18 @@
- 		}
- 	}
- 
 +	// Input gain
 +	for (i = 0; i < 4; i++) {
 +		if (i < 2) {
