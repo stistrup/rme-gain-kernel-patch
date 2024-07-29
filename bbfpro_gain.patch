@@ -1,5 +1,5 @@
---- original/mixer_quirks.c	2024-07-18 18:10:48.818639948 +0200
-+++ patch/mixer_quirks.c	2024-07-29 08:57:54.026989804 +0200
+--- a/sound/usb/mixer_quirks.c	2024-07-18 18:10:48.818639948 +0200
++++ b/sound/usb/mixer_quirks.c	2024-07-29 08:57:54.026989804 +0200
 @@ -2541,14 +2541,23 @@
  #define SND_BBFPRO_CTL_REG2_PAD_AN1 4
  #define SND_BBFPRO_CTL_REG2_PAD_AN2 5
