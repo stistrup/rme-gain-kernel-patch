@@ -1,5 +1,5 @@
 --- a/sound/usb/mixer_quirks.c	2024-07-18 18:10:48.818639948 +0200
-+++ b/sound/usb/mixer_quirks.c	2024-07-30 05:46:52.846542973 +0200
++++ b/sound/usb/mixer_quirks.c	2024-07-31 03:40:21.977676040 +0200
 @@ -2541,14 +2541,23 @@
  #define SND_BBFPRO_CTL_REG2_PAD_AN1 4
  #define SND_BBFPRO_CTL_REG2_PAD_AN2 5
@@ -25,18 +25,19 @@
  #define SND_BBFPRO_USBREQ_MIXER 0x12
 
  static int snd_bbfpro_ctl_update(struct usb_mixer_interface *mixer, u8 reg,
-@@ -2695,6 +2704,108 @@
+@@ -2695,6 +2704,113 @@
  	return snd_bbfpro_ctl_update(list->mixer, reg, idx, value);
  }
 
-+static int snd_bbfpro_gain_update(struct usb_mixer_interface *mixer, u8 channel, u8 gain)
++static int snd_bbfpro_gain_update(struct usb_mixer_interface *mixer,
++				  u8 channel, u8 gain)
 +{
 +	int err;
 +
 +	struct snd_usb_audio *chip = mixer->chip;
 +
 +	if (channel < 2) {
-+		/* XLR preamp: 3-bit fine, 5-bit coarse; special case >60 */
++		// XLR preamp: 3-bit fine, 5-bit coarse; special case >60
 +		if (gain < 60)
 +			gain = ((gain % 3) << 5) | (gain / 3);
 +		else
@@ -71,7 +72,8 @@
 +	int pv, channel;
 +
 +	pv = kcontrol->private_value;
-+	channel = (pv >> SND_BBFPRO_GAIN_CHANNEL_SHIFT) & SND_BBFPRO_GAIN_CHANNEL_MASK;
++	channel = (pv >> SND_BBFPRO_GAIN_CHANNEL_SHIFT) &
++		  SND_BBFPRO_GAIN_CHANNEL_MASK;
 +
 +	uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
 +	uinfo->count = 1;
@@ -95,7 +97,8 @@
 +	struct usb_mixer_interface *mixer = list->mixer;
 +
 +	pv = kcontrol->private_value;
-+	channel = (pv >> SND_BBFPRO_GAIN_CHANNEL_SHIFT) & SND_BBFPRO_GAIN_CHANNEL_MASK;
++	channel = (pv >> SND_BBFPRO_GAIN_CHANNEL_SHIFT) &
++		  SND_BBFPRO_GAIN_CHANNEL_MASK;
 +	old_value = pv & SND_BBFPRO_GAIN_VAL_MASK;
 +	value = ucontrol->value.integer.value[0];
 +
@@ -114,7 +117,8 @@
 +	if (err < 0)
 +		return err;
 +
-+	kcontrol->private_value = (channel << SND_BBFPRO_GAIN_CHANNEL_SHIFT) | value;
++	kcontrol->private_value =
++		  (channel << SND_BBFPRO_GAIN_CHANNEL_SHIFT) | value;
 +	return 1;
 +}
 +
@@ -125,7 +129,8 @@
 +	struct snd_kcontrol *kctl = list->kctl;
 +
 +	pv = kctl->private_value;
-+	channel = (pv >> SND_BBFPRO_GAIN_CHANNEL_SHIFT) & SND_BBFPRO_GAIN_CHANNEL_MASK;
++	channel = (pv >> SND_BBFPRO_GAIN_CHANNEL_SHIFT) &
++		  SND_BBFPRO_GAIN_CHANNEL_MASK;
 +	value = pv & SND_BBFPRO_GAIN_VAL_MASK;
 +
 +	return snd_bbfpro_gain_update(list->mixer, channel, value);
@@ -134,7 +139,7 @@
  static int snd_bbfpro_vol_update(struct usb_mixer_interface *mixer, u16 index,
  				 u32 value)
  {
-@@ -2790,6 +2901,15 @@
+@@ -2790,6 +2906,15 @@
  	.put = snd_bbfpro_ctl_put
  };
 
@@ -150,7 +155,7 @@
  static const struct snd_kcontrol_new snd_bbfpro_vol_control = {
  	.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
  	.access = SNDRV_CTL_ELEM_ACCESS_READWRITE,
-@@ -2813,6 +2933,18 @@
+@@ -2813,6 +2938,18 @@
  		&knew, NULL);
  }
 
@@ -169,7 +174,7 @@
  static int snd_bbfpro_vol_add(struct usb_mixer_interface *mixer, u16 index,
  			      char *name)
  {
-@@ -2860,6 +2992,27 @@
+@@ -2860,6 +2997,27 @@
  		}
  	}
 
