@@ -1,5 +1,5 @@
 --- a/sound/usb/mixer_quirks.c	2024-07-18 18:10:48.818639948 +0200
-+++ b/sound/usb/mixer_quirks.c	2024-07-31 03:40:21.977676040 +0200
++++ b/sound/usb/mixer_quirks.c	2024-07-31 03:48:45.353263443 +0200
 @@ -2541,14 +2541,23 @@
  #define SND_BBFPRO_CTL_REG2_PAD_AN1 4
  #define SND_BBFPRO_CTL_REG2_PAD_AN2 5
@@ -174,7 +174,7 @@
  static int snd_bbfpro_vol_add(struct usb_mixer_interface *mixer, u16 index,
  			      char *name)
  {
-@@ -2860,6 +2997,27 @@
+@@ -2860,6 +2997,29 @@
  		}
  	}
 
@@ -182,7 +182,9 @@
 +	for (i = 0 ; i < 12 ; ++i) {
 +		snprintf(name, sizeof(name), "Main-Out %s", output[i]);
 +		// Main outs are offset to 992
-+		err = snd_bbfpro_vol_add(mixer, i + SND_BBFPRO_MIXER_MAIN_OUT_CH_OFFSET, name);
++		err = snd_bbfpro_vol_add(mixer,
++					 i + SND_BBFPRO_MIXER_MAIN_OUT_CH_OFFSET,
++					 name);
 +		if (err < 0)
 +			return err;
 +	}
