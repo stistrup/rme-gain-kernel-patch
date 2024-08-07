@@ -1,5 +1,5 @@
 --- a/sound/usb/mixer_quirks.c	2024-07-18 18:10:48.818639948 +0200
-+++ b/sound/usb/mixer_quirks.c	2024-07-31 03:48:45.353263443 +0200
++++ b/sound/usb/mixer_quirks.c	2024-08-07 19:51:36.120108853 +0200
 @@ -2541,14 +2541,23 @@
  #define SND_BBFPRO_CTL_REG2_PAD_AN1 4
  #define SND_BBFPRO_CTL_REG2_PAD_AN2 5
@@ -25,7 +25,7 @@
  #define SND_BBFPRO_USBREQ_MIXER 0x12
 
  static int snd_bbfpro_ctl_update(struct usb_mixer_interface *mixer, u8 reg,
-@@ -2695,6 +2704,113 @@
+@@ -2695,6 +2704,115 @@
  	return snd_bbfpro_ctl_update(list->mixer, reg, idx, value);
  }
 
@@ -33,7 +33,6 @@
 +				  u8 channel, u8 gain)
 +{
 +	int err;
-+
 +	struct snd_usb_audio *chip = mixer->chip;
 +
 +	if (channel < 2) {
@@ -102,6 +101,9 @@
 +	old_value = pv & SND_BBFPRO_GAIN_VAL_MASK;
 +	value = ucontrol->value.integer.value[0];
 +
++	if (value < SND_BBFPRO_GAIN_VAL_MIN)
++		return -EINVAL;
++
 +	if (channel < 2) {
 +		if (value > SND_BBFPRO_GAIN_VAL_MIC_MAX)
 +			return -EINVAL;
@@ -139,7 +141,7 @@
  static int snd_bbfpro_vol_update(struct usb_mixer_interface *mixer, u16 index,
  				 u32 value)
  {
-@@ -2790,6 +2906,15 @@
+@@ -2790,6 +2908,15 @@
  	.put = snd_bbfpro_ctl_put
  };
 
@@ -155,7 +157,7 @@
  static const struct snd_kcontrol_new snd_bbfpro_vol_control = {
  	.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
  	.access = SNDRV_CTL_ELEM_ACCESS_READWRITE,
-@@ -2813,6 +2938,18 @@
+@@ -2813,6 +2940,18 @@
  		&knew, NULL);
  }
 
@@ -174,7 +176,7 @@
  static int snd_bbfpro_vol_add(struct usb_mixer_interface *mixer, u16 index,
  			      char *name)
  {
-@@ -2860,6 +2997,29 @@
+@@ -2860,6 +2999,29 @@
  		}
  	}
 
