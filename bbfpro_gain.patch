@@ -1,5 +1,5 @@
 --- a/sound/usb/mixer_quirks.c	2024-07-18 18:10:48.818639948 +0200
-+++ b/sound/usb/mixer_quirks.c	2024-08-07 19:51:36.120108853 +0200
++++ b/sound/usb/mixer_quirks.c	2024-08-08 20:32:56.658333102 +0200
 @@ -2541,14 +2541,23 @@
  #define SND_BBFPRO_CTL_REG2_PAD_AN1 4
  #define SND_BBFPRO_CTL_REG2_PAD_AN2 5
@@ -58,15 +58,16 @@
 +}
 +
 +static int snd_bbfpro_gain_get(struct snd_kcontrol *kcontrol,
-+                               struct snd_ctl_elem_value *ucontrol)
++			       struct snd_ctl_elem_value *ucontrol)
 +{
 +	int value = kcontrol->private_value & SND_BBFPRO_GAIN_VAL_MASK;
++
 +	ucontrol->value.integer.value[0] = value;
 +	return 0;
 +}
 +
 +static int snd_bbfpro_gain_info(struct snd_kcontrol *kcontrol,
-+                                struct snd_ctl_elem_info *uinfo)
++				struct snd_ctl_elem_info *uinfo)
 +{
 +	int pv, channel;
 +
@@ -78,17 +79,16 @@
 +	uinfo->count = 1;
 +	uinfo->value.integer.min = SND_BBFPRO_GAIN_VAL_MIN;
 +
-+	if (channel < 2) {
++	if (channel < 2)
 +		uinfo->value.integer.max = SND_BBFPRO_GAIN_VAL_MIC_MAX;
-+	} else {
++	else
 +		uinfo->value.integer.max = SND_BBFPRO_GAIN_VAL_LINE_MAX;
-+	}
 +
 +	return 0;
 +}
 +
 +static int snd_bbfpro_gain_put(struct snd_kcontrol *kcontrol,
-+                               struct snd_ctl_elem_value *ucontrol)
++			       struct snd_ctl_elem_value *ucontrol)
 +{
 +	int pv, channel, old_value, value, err;
 +
@@ -162,7 +162,7 @@
  }
 
 +static int snd_bbfpro_gain_add(struct usb_mixer_interface *mixer, u8 channel,
-+                               char *name)
++			       char *name)
 +{
 +	struct snd_kcontrol_new knew = snd_bbfpro_gain_control;
 +
@@ -193,11 +193,11 @@
 +
 +	// Input gain
 +	for (i = 0 ; i < 4 ; ++i) {
-+		if (i < 2) {
++		if (i < 2)
 +			snprintf(name, sizeof(name), "Mic-%s Gain", input[i]);
-+		} else {
++		else
 +			snprintf(name, sizeof(name), "Line-%s Gain", input[i]);
-+		}
++
 +		err = snd_bbfpro_gain_add(mixer, i, name);
 +		if (err < 0)
 +			return err;
