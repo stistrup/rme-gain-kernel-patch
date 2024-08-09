@@ -1,5 +1,5 @@
 --- a/sound/usb/mixer_quirks.c	2024-07-18 18:10:48.818639948 +0200
-+++ b/sound/usb/mixer_quirks.c	2024-08-08 20:32:56.658333102 +0200
++++ b/sound/usb/mixer_quirks.c	2024-08-09 22:01:18.389357749 +0200
 @@ -2541,14 +2541,23 @@
  #define SND_BBFPRO_CTL_REG2_PAD_AN1 4
  #define SND_BBFPRO_CTL_REG2_PAD_AN2 5
@@ -25,7 +25,7 @@
  #define SND_BBFPRO_USBREQ_MIXER 0x12
 
  static int snd_bbfpro_ctl_update(struct usb_mixer_interface *mixer, u8 reg,
-@@ -2695,6 +2704,115 @@
+@@ -2695,6 +2704,114 @@
  	return snd_bbfpro_ctl_update(list->mixer, reg, idx, value);
  }
 
@@ -127,7 +127,6 @@
 +static int snd_bbfpro_gain_resume(struct usb_mixer_elem_list *list)
 +{
 +	int pv, channel, value;
-+
 +	struct snd_kcontrol *kctl = list->kctl;
 +
 +	pv = kctl->private_value;
@@ -141,7 +140,7 @@
  static int snd_bbfpro_vol_update(struct usb_mixer_interface *mixer, u16 index,
  				 u32 value)
  {
-@@ -2790,6 +2908,15 @@
+@@ -2790,6 +2907,15 @@
  	.put = snd_bbfpro_ctl_put
  };
 
@@ -157,7 +156,7 @@
  static const struct snd_kcontrol_new snd_bbfpro_vol_control = {
  	.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
  	.access = SNDRV_CTL_ELEM_ACCESS_READWRITE,
-@@ -2813,6 +2940,18 @@
+@@ -2813,6 +2939,18 @@
  		&knew, NULL);
  }
 
@@ -176,7 +175,7 @@
  static int snd_bbfpro_vol_add(struct usb_mixer_interface *mixer, u16 index,
  			      char *name)
  {
-@@ -2860,6 +2999,29 @@
+@@ -2860,6 +2998,29 @@
  		}
  	}
 
