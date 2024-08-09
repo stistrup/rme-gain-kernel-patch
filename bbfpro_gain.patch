@@ -1,5 +1,5 @@
 --- a/sound/usb/mixer_quirks.c	2024-07-18 18:10:48.818639948 +0200
-+++ b/sound/usb/mixer_quirks.c	2024-08-09 22:01:18.389357749 +0200
++++ b/sound/usb/mixer_quirks.c	2024-08-09 22:28:31.838289379 +0200
 @@ -2541,14 +2541,23 @@
  #define SND_BBFPRO_CTL_REG2_PAD_AN1 4
  #define SND_BBFPRO_CTL_REG2_PAD_AN2 5
@@ -48,10 +48,10 @@
 +		return err;
 +
 +	err = snd_usb_ctl_msg(chip->dev,
-+				usb_sndctrlpipe(chip->dev, 0),
-+				SND_BBFPRO_USBREQ_GAIN,
-+				USB_DIR_OUT | USB_TYPE_VENDOR | USB_RECIP_DEVICE,
-+				gain, channel, NULL, 0);
++			      usb_sndctrlpipe(chip->dev, 0),
++			      SND_BBFPRO_USBREQ_GAIN,
++			      USB_DIR_OUT | USB_TYPE_VENDOR | USB_RECIP_DEVICE,
++			      gain, channel, NULL, 0);
 +
 +	snd_usb_unlock_shutdown(chip);
 +	return err;
@@ -73,7 +73,7 @@
 +
 +	pv = kcontrol->private_value;
 +	channel = (pv >> SND_BBFPRO_GAIN_CHANNEL_SHIFT) &
-+		  SND_BBFPRO_GAIN_CHANNEL_MASK;
++		SND_BBFPRO_GAIN_CHANNEL_MASK;
 +
 +	uinfo->type = SNDRV_CTL_ELEM_TYPE_INTEGER;
 +	uinfo->count = 1;
@@ -97,7 +97,7 @@
 +
 +	pv = kcontrol->private_value;
 +	channel = (pv >> SND_BBFPRO_GAIN_CHANNEL_SHIFT) &
-+		  SND_BBFPRO_GAIN_CHANNEL_MASK;
++		SND_BBFPRO_GAIN_CHANNEL_MASK;
 +	old_value = pv & SND_BBFPRO_GAIN_VAL_MASK;
 +	value = ucontrol->value.integer.value[0];
 +
@@ -120,7 +120,7 @@
 +		return err;
 +
 +	kcontrol->private_value =
-+		  (channel << SND_BBFPRO_GAIN_CHANNEL_SHIFT) | value;
++		(channel << SND_BBFPRO_GAIN_CHANNEL_SHIFT) | value;
 +	return 1;
 +}
 +
@@ -131,7 +131,7 @@
 +
 +	pv = kctl->private_value;
 +	channel = (pv >> SND_BBFPRO_GAIN_CHANNEL_SHIFT) &
-+		  SND_BBFPRO_GAIN_CHANNEL_MASK;
++		SND_BBFPRO_GAIN_CHANNEL_MASK;
 +	value = pv & SND_BBFPRO_GAIN_VAL_MASK;
 +
 +	return snd_bbfpro_gain_update(list->mixer, channel, value);
