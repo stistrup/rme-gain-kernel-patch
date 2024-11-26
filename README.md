@@ -109,8 +109,7 @@ I guess it doesn't really matter what RME had in mind, as long as it works.
 
 This basically mimics the existing routing messages, apart from main out being offset and starts at 992.\
 In other words, sent on address 0x12 with a value between 0 and 65536 (-inf to +6 dB).\
-When setting the output volume, i noticed that it's set logarit
-I've also observed messages from the first 6 channels, (AN 1/2, PH 1/2 and AS 1/2) sending messages to 0x1a (same channel as gain) but did not do anything when i sent it regardless of how many times i verified the messages was the same. I first thought it would control the leds, but as it diddn't do anything that i could find, and that the messages on 0x12 changed the volume as expected, i opted to skip it.
+I notived the messages from the first 6 channels, (AN 1/2, PH 1/2 and AS 1/2) sending messages to 0x1a (same channel as gain) but did not do anything when i sent it regardless of how many times i verified the messages was the same. I first thought it would control the leds, but as it diddn't do anything that i could find, and that the messages on 0x12 changed the volume as expected, i opted to skip it.
 
 Some help/inspiration also taken from a [reverse engineering of the RME-Fireface-UC](https://github.com/agfline/RME-Fireface-UC-Drivers)
 
