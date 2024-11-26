@@ -5,32 +5,56 @@ One missing feature was to set input gain and main output volume and thats what 
 
 This patch has been submitted to ALSA-devel and will most likely be included in 6.12.
 
-Huge thanks to Andypoo which basically helped me through the whole process of making this and patching the kernel.
-
 ---
 
-### Patching
+## Added Controls
 
-Navigate to sound/usb in kernel source tree, and apply this patch (this patches mixer_quirks.c)\
-Once patched, compile sound/usb module, install or load module and these controls should show up in alsa and be controllable:
+### Input Controls
+- Mic-AN1 Gain
+- Mic-AN2 Gain
+- Line-IN3 Gain
+- Line-IN4 Gain
 
-Mic-AN1 Gain\
-Mic-AN2 Gain\
-Line-IN3 Gain\
-Line-IN4 Gain
+### Output Controls
+- Main-Out AN1
+- Main-Out AN2
+- Main-Out PH1
+- Main-Out PH2
+- Main-Out AS1
+- Main-Out AS2
+- Main-Out ADAT3-8
 
-Main-Out AN1\
-Main-Out AN2\
-Main-Out PH1\
-Main-Out PH2\
-Main-Out AS1\
-Main-Out AS2\
-Main-Out ADAT3\
-Main-Out ADAT4\
-Main-Out ADAT5\
-Main-Out ADAT6\
-Main-Out ADAT7\
-Main-Out ADAT8
+## Installation Methods
+
+### Method 1: Direct Kernel Module Patching
+Navigate to `sound/usb` in your kernel source tree and apply the `0001-ALSA-usb-audio-Add-input-gain-and-master-output-mixe.patch` patch to `mixer_quirks.c`. After patching, compile the sound/usb module and either install or load it.
+
+### Method 2: Manjaro Kernel Package Build
+1. Find the correct kernel version in the Manjaro core packages repository:
+   https://gitlab.manjaro.org/packages/core/
+
+2. Clone the appropriate kernel repository:
+   ```bash
+   git clone https://github.com/manjaro-kernels/linux610-rt.git  # Replace with your target version
+   ```
+
+3. Copy your patch file into the cloned repository directory
+   - Patch filename: `0001-ALSA-usb-audio-Add-input-gain-and-master-output-mixe.patch`
+
+4. Update the PKGBUILD file:
+   - Add the patch filename to the `source` array
+   - Generate the SHA256 hash of your patch:
+     ```bash
+     sha256sum 0001-ALSA-usb-audio-Add-input-gain-and-master-output-mixe.patch
+     ```
+   - Add the generated hash to the `sha256sums` array in the same order as the patch appears in the `source` array
+
+5. Build and install the package:
+   ```bash
+   makepkg -si
+   ```
+
+After installation using either method, the new mixer controls should be available through ALSA.
 
 ---
 
@@ -89,3 +113,5 @@ When setting the output volume, i noticed that it's set logarit
 I've also observed messages from the first 6 channels, (AN 1/2, PH 1/2 and AS 1/2) sending messages to 0x1a (same channel as gain) but did not do anything when i sent it regardless of how many times i verified the messages was the same. I first thought it would control the leds, but as it diddn't do anything that i could find, and that the messages on 0x12 changed the volume as expected, i opted to skip it.
 
 Some help/inspiration also taken from a [reverse engineering of the RME-Fireface-UC](https://github.com/agfline/RME-Fireface-UC-Drivers)
+
+Huge thanks to Andypoo which basically helped me through the whole process of making this and patching the kernel.
