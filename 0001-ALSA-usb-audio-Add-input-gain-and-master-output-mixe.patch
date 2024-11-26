@@ -1,9 +1,41 @@
---- a/sound/usb/mixer_quirks.c	2024-07-18 18:10:48.818639948 +0200
-+++ b/sound/usb/mixer_quirks.c	2024-08-18 22:43:58.018045602 +0200
-@@ -2541,14 +2541,23 @@
+From 0efa6b4c467b3f197ca4fe20df382b2c89e3bdd5 Mon Sep 17 00:00:00 2001
+From: Stefan Stistrup <sstistrup@gmail.com>
+Date: Fri, 9 Aug 2024 22:29:00 +0200
+Subject: [PATCH v3] ALSA: usb-audio: Add input gain and master output mixer
+ elements for RME Babyface Pro
+
+Add missing input gain and master output mixer controls for 
+RME Babyface Pro.
+
+This patch implements:
+
+1. Input gain controls for 2 mic and 2 line inputs
+2. Master output volume controls for all 12 output channels
+
+These additions allow for more complete control of the Babyface Pro under
+Linux.
+
+Signed-off-by: Stefan Stistrup <sstistrup@gmail.com>
+---
+Changes in v3:
+ - Use checkpatch.pl without -f flag.
+ - Fix remaining style issues from checkpatch.pl
+
+Changes in v2:
+ - Check invalid negative values in snd_bbfpro_gain_put
+ - Remove blank line in snd_bbfpro_gain_update and fix checkpatch.pl errors
+
+ sound/usb/mixer_quirks.c | 163 ++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 162 insertions(+), 1 deletion(-)
+
+diff --git a/sound/usb/mixer_quirks.c b/sound/usb/mixer_quirks.c
+index 065a4be0d771..5abfcd90b7a2 100644
+--- a/sound/usb/mixer_quirks.c
++++ b/sound/usb/mixer_quirks.c
+@@ -2541,14 +2541,23 @@ enum {
  #define SND_BBFPRO_CTL_REG2_PAD_AN1 4
  #define SND_BBFPRO_CTL_REG2_PAD_AN2 5
-
+ 
 -#define SND_BBFPRO_MIXER_IDX_MASK 0x1ff
 +#define SND_BBFPRO_MIXER_MAIN_OUT_CH_OFFSET 992
 +#define SND_BBFPRO_MIXER_IDX_MASK 0x3ff
@@ -11,7 +43,7 @@
  #define SND_BBFPRO_MIXER_VAL_SHIFT 9
  #define SND_BBFPRO_MIXER_VAL_MIN 0 // -inf
  #define SND_BBFPRO_MIXER_VAL_MAX 65536 // +6dB
-
+ 
 +#define SND_BBFPRO_GAIN_CHANNEL_MASK 0x03
 +#define SND_BBFPRO_GAIN_CHANNEL_SHIFT 7
 +#define SND_BBFPRO_GAIN_VAL_MASK 0x7f
@@ -23,12 +55,12 @@
  #define SND_BBFPRO_USBREQ_CTL_REG2 0x17
 +#define SND_BBFPRO_USBREQ_GAIN 0x1a
  #define SND_BBFPRO_USBREQ_MIXER 0x12
-
+ 
  static int snd_bbfpro_ctl_update(struct usb_mixer_interface *mixer, u8 reg,
-@@ -2695,6 +2704,117 @@
+@@ -2695,6 +2704,114 @@ static int snd_bbfpro_ctl_resume(struct usb_mixer_elem_list *list)
  	return snd_bbfpro_ctl_update(list->mixer, reg, idx, value);
  }
-
+ 
 +static int snd_bbfpro_gain_update(struct usb_mixer_interface *mixer,
 +				  u8 channel, u8 gain)
 +{
@@ -46,9 +78,6 @@
 +	err = snd_usb_lock_shutdown(chip);
 +	if (err < 0)
 +		return err;
-+
-+	printk("USB constants: DIR_OUT=0x%02x, TYPE_VENDOR=0x%02x, RECIP_DEVICE=0x%02x\n",
-+       USB_DIR_OUT, USB_TYPE_VENDOR, USB_RECIP_DEVICE);
 +
 +	err = snd_usb_ctl_msg(chip->dev,
 +			      usb_sndctrlpipe(chip->dev, 0),
@@ -143,10 +172,10 @@
  static int snd_bbfpro_vol_update(struct usb_mixer_interface *mixer, u16 index,
  				 u32 value)
  {
-@@ -2790,6 +2910,15 @@
+@@ -2790,6 +2907,15 @@ static const struct snd_kcontrol_new snd_bbfpro_ctl_control = {
  	.put = snd_bbfpro_ctl_put
  };
-
+ 
 +static const struct snd_kcontrol_new snd_bbfpro_gain_control = {
 +	.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
 +	.access = SNDRV_CTL_ELEM_ACCESS_READWRITE,
@@ -159,10 +188,10 @@
  static const struct snd_kcontrol_new snd_bbfpro_vol_control = {
  	.iface = SNDRV_CTL_ELEM_IFACE_MIXER,
  	.access = SNDRV_CTL_ELEM_ACCESS_READWRITE,
-@@ -2813,6 +2942,18 @@
+@@ -2813,6 +2939,18 @@ static int snd_bbfpro_ctl_add(struct usb_mixer_interface *mixer, u8 reg,
  		&knew, NULL);
  }
-
+ 
 +static int snd_bbfpro_gain_add(struct usb_mixer_interface *mixer, u8 channel,
 +			       char *name)
 +{
@@ -178,10 +207,10 @@
  static int snd_bbfpro_vol_add(struct usb_mixer_interface *mixer, u16 index,
  			      char *name)
  {
-@@ -2860,6 +3001,29 @@
+@@ -2860,6 +2998,29 @@ static int snd_bbfpro_controls_create(struct usb_mixer_interface *mixer)
  		}
  	}
-
+ 
 +	// Main out volume
 +	for (i = 0 ; i < 12 ; ++i) {
 +		snprintf(name, sizeof(name), "Main-Out %s", output[i]);
@@ -208,3 +237,6 @@
  	// Control Reg 1
  	err = snd_bbfpro_ctl_add(mixer, SND_BBFPRO_CTL_REG1,
  				 SND_BBFPRO_CTL_REG1_CLK_OPTICAL,
+-- 
+2.45.2
+
