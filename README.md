@@ -30,6 +30,8 @@ This patch has been submitted to ALSA-devel and will most likely be included in 
 Navigate to `sound/usb` in your kernel source tree and apply the `0001-ALSA-usb-audio-Add-input-gain-and-master-output-mixe.patch` patch to `mixer_quirks.c`. After patching, compile the sound/usb module and either install or load it.
 
 ### Method 2: Manjaro Kernel Package Build
+More extensive instruction, as it's the option i'm familiar with
+
 1. Find the correct kernel version in the Manjaro core packages repository:
    https://gitlab.manjaro.org/packages/core/
 
@@ -49,10 +51,31 @@ Navigate to `sound/usb` in your kernel source tree and apply the `0001-ALSA-usb-
      ```
    - Add the generated hash to the `sha256sums` array in the same order as the patch appears in the `source` array
 
-5. Build and install the package:
+5. Build and install the package (this takes a loong time):
    ```bash
    makepkg -si
    ```
+
+I'm not a pro when it comes to how to actually boot with the newly built kernel. And what i did this last time is to add a menuentry so you can just choose this kernel on boot:
+
+```
+sudo nano /etc/grub.d/40_custom
+```
+And add the following:
+```
+menuentry "Manjaro Linux (Custom RT Kernel 6.10)" {
+    linux /boot/vmlinuz-6.10-rt-x86_64 root=UUID=YOUR_ROOT_UUID rw
+    initrd /boot/initramfs-6.10-rt-x86_64.img
+}
+```
+Root UUID can be found with 
+```
+lsblk -f
+```
+And lastly update grub:
+```
+sudo grub-mkconfig -o /boot/grub/grub.cfg
+```
 
 After installation using either method, the new mixer controls should be available through ALSA.
 
